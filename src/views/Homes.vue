@@ -240,4 +240,7 @@ export default {
 .van-cell {
   padding: 0;
 }
+/deep/.van-tabs__nav--line{
+  margin-right:44px;
+}
 </style>

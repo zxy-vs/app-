@@ -13,7 +13,7 @@
     <div
       class="maint"
       @click="isShow = false"
-      :style="{ marginBottom: isShow ? '80px' : '50px' }"
+      :style="{ paddingBottom: isShow ? '95px' : '65px' }"
     >
       <GlobalCom1 :item="item" :call="false" />
       <van-divider style="margin: 0">回复</van-divider>
@@ -114,10 +114,10 @@ export default {
   }
 }
 .maint {
-  margin-top: 46px;
   background-color: #fff;
   padding: 0.4rem 0.42667rem;
-  // height: 100vh-46px-80px;
+  min-height:667px;
+  padding-top: 46px;
   overflow-y: auto;
   .none {
     width: 100%;
