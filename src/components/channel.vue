@@ -90,7 +90,6 @@ export default {
         this.time = setTimeout(async () => {
           this.jl.push({ id: item.id, seq: this.jl[this.jl.length] });
           await axios.put("/api/v1_0/user/channels", { channels: this.jl });
-
           this.$emit("add", item);
           this.jieliu = true;
         }, 200);
@@ -109,7 +108,6 @@ export default {
       handler() {
         this.getList();
       },
-      deep: true,
     },
   },
 };

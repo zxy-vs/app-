@@ -7,18 +7,32 @@
       </div>
     </div>
     <div class="main">
-      <!-- v-model="fileList" -->
-      <van-uploader :after-read="updates" :preview-image="false">
+      <input type="file" hidden ref="file" @change="Change" />
+      <van-popup v-model="showss" position="bottom" :style="{ height: '100%' }">
+        <Imgs v-if="showss" :img="img" @show="Show" @shows="Shows" />
+      </van-popup>
+      <div class="img">
+        <van-cell title="头像" is-link value="内容" @click="$refs.file.click()">
+          <template #default>
+            <van-image
+              ref="img"
+              round
+              width="1.3rem"
+              height="1.3rem"
+              :src="me.photo"
+            />
+          </template>
+        </van-cell>
+      </div>
+      <!-- <van-uploader :after-read="updates" :preview-image="false">
         <div class="img">
           <van-cell title="头像" is-link value="内容">
             <template #default>
-              <van-image round width="1.3rem" height="1.3rem" :src="me.photo" />
+              <van-image ref="img" round width="1.3rem" height="1.3rem" :src="me.photo" />
             </template>
           </van-cell>
         </div>
-
-        <!-- <van-button icon="plus" type="primary">上传文件</van-button> -->
-      </van-uploader>
+      </van-uploader> -->
       <van-cell title="姓名" is-link :value="me.name" @click="show = true" />
       <van-cell
         title="生日"
@@ -50,16 +64,22 @@
 </template>
 
 <script>
+import Image from "./image.vue";
 export default {
+  components: { Imgs: Image },
+
   data() {
     return {
       fileList: [],
       show: false,
       shows: false,
+      showss: false,
       me: {},
+      img: "",
       minDate: new Date(0),
       maxDate: new Date(),
       currentDate: "",
+      cropper: null,
     };
   },
   methods: {
@@ -78,7 +98,7 @@ export default {
     async updates(item) {
       if (this.me.name == item) {
         await axios.patch("/api/v1_0/user/profile", { name: item });
-        this.getMes();
+        this.me.name = item;
       } else if (this.currentDate == item) {
         let y = item.getFullYear(),
           m = item.getMonth(),
@@ -86,15 +106,30 @@ export default {
         await axios.patch("/api/v1_0/user/profile", {
           birthday: `${y}-${m + 1}-${d}`,
         });
-        this.getMes();
+        this.me.birthday = `${y}-${m + 1}-${d}`;
         this.shows = false;
       } else {
         const blob = new Blob([item.file], { type: "image/png" });
         const formData = new FormData();
         formData.append("photo", blob);
-        const { data } = await axios.patch("/api/v1_0/user/photo", formData);
-        this.getMes();
+        const {
+          data: { photo: photo },
+        } = await axios.patch("/api/v1_0/user/photo", formData);
+        this.me.photo = photo;
       }
+    },
+    Change() {
+      const url = URL.createObjectURL(this.$refs.file.files[0]);
+      this.img = url;
+      this.showss = true;
+      this.$refs.file.value = "";
+    },
+    Show() {
+      this.showss = false;
+    },
+    Shows(photo) {
+      this.me.photo = photo;
+      this.Show();
     },
   },
   created() {

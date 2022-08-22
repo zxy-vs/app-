@@ -31,27 +31,29 @@
             :title="item.name"
             :name="item.id"
           >
-            <van-pull-refresh
-              v-model="isLoading"
-              success-text="刷新成功"
-              @refresh="onRefresh"
-            >
-              <van-list class="list" v-model="loading" @load="onLoad(item)">
-                <van-cell v-for="items in item.list" :key="items.art_id">
-                  <globalCom
-                    :item="items"
-                    :s="true"
-                    @sp="
-                      (id) =>
-                        items.splice(
-                          items.findIndex((v) => v.art_id === id),
-                          1
-                        )
-                    "
-                  />
-                </van-cell>
-              </van-list>
-            </van-pull-refresh>
+            <div class="list">
+              <van-pull-refresh
+                v-model="isLoading"
+                success-text="刷新成功"
+                @refresh="onRefresh"
+              >
+                <van-list ref="lis" v-model="loading" @load="onLoad(item)">
+                  <van-cell v-for="items in item.list" :key="items.art_id">
+                    <globalCom
+                      :item="items"
+                      :s="true"
+                      @sp="
+                        (id) =>
+                          items.splice(
+                            items.findIndex((v) => v.art_id === id),
+                            1
+                          )
+                      "
+                    />
+                  </van-cell>
+                </van-list>
+              </van-pull-refresh>
+            </div>
           </van-tab>
         </van-tabs>
         <div slot="nav-right">
@@ -85,6 +87,7 @@
 import Channel from "../components/channel.vue";
 import Search from "../components/search.vue";
 export default {
+  components: { Channel, Search },
   data() {
     return {
       active: "",
@@ -118,7 +121,6 @@ export default {
           this.$set(this.list[index], "pre_timestamp", res.data.pre_timestamp);
         });
     },
-
     reList(index) {
       this.list.splice(index, 1);
     },
@@ -172,7 +174,6 @@ export default {
       return parseInt((nt - ot) / 1000 / 60 / 60 / 24 / 365);
     },
   },
-  components: { Channel, Search },
 };
 </script>
 
@@ -215,6 +216,7 @@ export default {
     left: 0;
     right: 0;
     display: flex;
+
     justify-content: space-between;
     .tab {
       width: 100%;
@@ -240,7 +242,7 @@ export default {
 .van-cell {
   padding: 0;
 }
-/deep/.van-tabs__nav--line{
-  margin-right:44px;
+/deep/.van-tabs__nav--line {
+  margin-right: 44px;
 }
 </style>
